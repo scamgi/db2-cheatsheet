@@ -10,8 +10,12 @@
 \end{itemize}
 
 \subsection*{Protocols \& Classes}
+[INSERT HERE the image about the classes]
 \begin{itemize}
-    \item \textbf{VSR (View-Serializable):} Schedules are equivalent to some serial schedule from a view perspective.
+    \item \textbf{VSR (View-Serializable):}
+    \begin{itemize}
+        \item If the schedule is CSR, then it is VSR.
+    \end{itemize}
     \item \textbf{CSR (Conflict-Serializable):} Schedules can be transformed into a serial schedule by swapping non-conflicting operations. Precedence graph must be acyclic.
     \item \textbf{2PL (Two-Phase Locking):} A transaction has a growing phase (acquiring locks) and a shrinking phase (releasing locks). Cannot acquire after releasing.
     \item \textbf{Strict-2PL:} All exclusive (write) locks are held until the transaction commits or aborts. Prevents dirty reads.
