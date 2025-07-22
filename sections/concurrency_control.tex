@@ -4,10 +4,9 @@
 
 \subsection*{Anomalies}
 \begin{itemize}
-    \item \textbf{Dirty Read (WR):} Reading uncommitted data.
-    \item \textbf{Lost Update (WW):} One transaction's update is overwritten by another.
-    \item \textbf{Non-Repeatable Read (RW):} A value read twice differs because another transaction committed in between.
-    \item \textbf{Phantom Read:} New rows appear in a repeated query.
+    \item \textbf{Dirty Read:} Reading uncommitted data.
+    \item \textbf{Lost Update:} One transaction's update is overwritten by another.
+    \item \textbf{...:} ...
 \end{itemize}
 
 \subsection*{Protocols \& Classes}
@@ -17,7 +16,6 @@
     \item \textbf{2PL (Two-Phase Locking):} A transaction has a growing phase (acquiring locks) and a shrinking phase (releasing locks). Cannot acquire after releasing.
     \item \textbf{Strict-2PL:} All exclusive (write) locks are held until the transaction commits or aborts. Prevents dirty reads.
     \item \textbf{Obermarck's Algorithm:} Used for distributed deadlock detection.
-    \item \textbf{Update Locks:} A special lock type to prevent common deadlocks in update scenarios (Read -> Upgrade to Write).
     \item \textbf{Timestamp Ordering (TS-Mono):} Uses timestamps to order transactions. Monotonic clock.
     \item \textbf{Timestamp Ordering (TS-Multi):} Multi-version concurrency control (MVCC).
     \item \textbf{Hierarchy Locking:} A protocol for locking objects at different granularities (e.g., table, page, row).
