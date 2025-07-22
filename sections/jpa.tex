@@ -2,7 +2,140 @@
 
 \section*{JPA (Java Persistence API)}
 
-\subsection*{General Rules}
-\begin{itemize}
-    \item \textbf{...:} ...
-\end{itemize}
+\subsection*{Part 1: The Core Workflow}
+\begin{enumerate}
+    \item \textbf{Read the text}: Analyze requirements, E-R diagram, cardinalities, and application access patterns.
+    \item \textbf{Create basic entities}: For each entity in the E-R diagram, create a class annotated with \texttt{@Entity}.
+    \item \textbf{Map primary keys and attributes}: Use \texttt{@Id} and \texttt{@GeneratedValue}.
+    \begin{verbatim}
+@Entity
+public class Building {
+    @Id 
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private int buildingId;
+    private String address;
+    // ...
+}
+    \end{verbatim}
+    \item \textbf{Map relationships} ($\implies$ See Part 2).
+    \item \textbf{Define queries and ordering}: Use annotations to define queries and specify data retrieval order.
+    \begin{verbatim}
+// To define a reusable query
+@NamedQuery(name="User.checkCredentials", 
+    query="SELECT u FROM User u WHERE u.username = ?1 AND u.password = ?2")
+
+// To specify date/time precision
+@Temporal(TemporalType.TIMESTAMP)
+private Date timestamp;
+
+// To order a collection fetched from the database
+@OneToMany(mappedBy="manager")
+@OrderBy("end DESC")
+private List<Project> managedProjects;
+    \end{verbatim}
+    \item \textbf{Implement helper methods}: For bidirectional relationships, create methods to synchronize both sides.
+\end{enumerate}
+
+\section*{Part 2: Relationship Mapping}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Owner Side} & \textbf{Inverse Side (Non-Owner)} \\
+\hline
+Manages the relationship. & Delegates management to the owner. \\
+Uses \texttt{@JoinColumn} to name the FK. & Uses \texttt{mappedBy} attribute. \\
+\hline
+\texttt{@ManyToOne}, \texttt{@OneToOne} & \texttt{@OneToMany}, \texttt{@OneToOne} \\
+\hline
+\multicolumn{2}{|c|}{\texttt{fetch = FetchType.LAZY} (for collections) or \texttt{FetchType.EAGER}} \\
+\hline
+\texttt{cascade = \{CascadeType.PERSIST, REMOVE, ...\}} & No cascade settings. \\
+\texttt{orphanRemoval = true} & \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{One-to-One Example (Employee $\leftrightarrow$ ParkingSpace)}
+\begin{verbatim}
+// Employee.java (Owner)
+@OneToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "ps_fk")
+private ParkingSpace parkingSpace;
+
+// ParkingSpace.java (Inverse)
+@OneToOne(mappedBy = "parkingSpace")
+private Employee employee;
+\end{verbatim}
+
+\subsubsection*{One-to-Many Example (Building $\leftrightarrow$ Meter)}
+\begin{verbatim}
+// Building.java (Inverse Side)
+@OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
+private List<Meter> meters;
+
+// Meter.java (Owner Side)
+@ManyToOne
+@JoinColumn(name = "buildFK")
+private Building building;
+\end{verbatim}
+
+\subsubsection*{Many-to-Many Example (Project $\leftrightarrow$ Employee)}
+\begin{verbatim}
+// Project.java (Owner Side)
+@ManyToMany(fetch = FetchType.EAGER)
+@JoinTable(
+    name="emp_prj",
+    joinColumns={@JoinColumn(name="projid")},
+    inverseJoinColumns={@JoinColumn(name="empid")}
+)
+private List<Employee> employees;
+
+// Employee.java (Inverse Side)
+@ManyToMany(mappedBy = "employees")
+private List<Project> assignedProjects;
+\end{verbatim}
+
+\section*{Part 3: Advanced Patterns (N:M with Attributes)}
+\subsection*{\texttt{@ElementCollection}}
+Use when the relationship attribute is simple (e.g., a number, a string). The collection becomes a \texttt{Map<Entity, AttributeType>}.
+\begin{verbatim}
+// In Order.java
+@ElementCollection(fetch = FetchType.EAGER)
+@CollectionTable(name = "product_order", 
+    joinColumns = @JoinColumn(name = "orderId"))
+@MapKeyJoinColumn(name = "productId") // FK for the Map Key (Product)
+@Column(name = "quantity")            // Column for the Map Value (Integer)
+private Map<Product, Integer> products;
+\end{verbatim}
+
+\subsection*{Association Entity}
+Objectify the relationship into its own entity. Use this when the relationship is complex or needs to be referenced directly.
+\begin{enumerate}
+    \item \textbf{Create a Composite Key Class} (\texttt{@Embeddable})
+    \begin{verbatim}
+@Embeddable
+public class OrderLineId implements Serializable {
+    private Long orderId;
+    private Long productId;
+    // ...constructors, getters, equals, hashCode
+}
+    \end{verbatim}
+    \item \textbf{Create the Association Entity} (\texttt{@Entity})
+    \begin{verbatim}
+@Entity
+public class OrderLine {
+    @EmbeddedId
+    private OrderLineId id;
+
+    @ManyToOne
+    @MapsId("orderId") // Maps to the 'orderId' field in OrderLineId
+    private Order order;
+
+    @ManyToOne
+    @MapsId("productId") // Maps to the 'productId' field in OrderLineId
+    private Product product;
+
+    private int quantity;
+}
+    \end{verbatim}
+\end{enumerate}
