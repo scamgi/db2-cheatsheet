@@ -23,6 +23,29 @@
 
 \usepackage{xcolor}
 \usepackage{fancyvrb} % Use the fancyvrb package
+\usepackage{listings}
+% Define a background color for code blocks
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+
+% Define the style for the code listings
+\lstset{
+    language=Java,
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    frame=none,
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue},
+    stringstyle=\color{purple},
+    % Add JPA annotations as keywords for better highlighting
+    morekeywords={Entity,Id,GeneratedValue,OneToOne,OneToMany,ManyToOne,ManyToMany,JoinColumn,JoinTable,NamedQuery,Temporal,OrderBy,ElementCollection,CollectionTable,MapKeyJoinColumn,Column,Embeddable,EmbeddedId,MapsId}
+}
+
 
 % For better font handling
 \usepackage[T1]{fontenc}

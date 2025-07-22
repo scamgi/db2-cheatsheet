@@ -7,7 +7,7 @@
     \item \textbf{Read the text}: Analyze requirements, E-R diagram, cardinalities, and application access patterns.
     \item \textbf{Create basic entities}: For each entity in the E-R diagram, create a class annotated with \texttt{@Entity}.
     \item \textbf{Map primary keys and attributes}: Use \texttt{@Id} and \texttt{@GeneratedValue}.
-    \begin{verbatim}
+    \begin{lstlisting}
 @Entity
 public class Building {
     @Id 
@@ -16,10 +16,10 @@ public class Building {
     private String address;
     // ...
 }
-    \end{verbatim}
+    \end{lstlisting}
     \item \textbf{Map relationships} ($\implies$ See Part 2).
     \item \textbf{Define queries and ordering}: Use annotations to define queries and specify data retrieval order.
-    \begin{verbatim}
+    \begin{lstlisting}
 // To define a reusable query
 @NamedQuery(name="User.checkCredentials", 
     query="SELECT u FROM User u WHERE u.username = ?1 AND u.password = ?2")
@@ -32,7 +32,7 @@ private Date timestamp;
 @OneToMany(mappedBy="manager")
 @OrderBy("end DESC")
 private List<Project> managedProjects;
-    \end{verbatim}
+    \end{lstlisting}
     \item \textbf{Implement helper methods}: For bidirectional relationships, create methods to synchronize both sides.
 \end{enumerate}
 
@@ -56,7 +56,7 @@ Uses \texttt{@JoinColumn} to name the FK. & Uses \texttt{mappedBy} attribute. \\
 \end{center}
 
 \subsubsection*{One-to-One Example (Employee $\leftrightarrow$ ParkingSpace)}
-\begin{verbatim}
+\begin{lstlisting}
 // Employee.java (Owner)
 @OneToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "ps_fk")
@@ -65,10 +65,10 @@ private ParkingSpace parkingSpace;
 // ParkingSpace.java (Inverse)
 @OneToOne(mappedBy = "parkingSpace")
 private Employee employee;
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection*{One-to-Many Example (Building $\leftrightarrow$ Meter)}
-\begin{verbatim}
+\begin{lstlisting}
 // Building.java (Inverse Side)
 @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
 private List<Meter> meters;
@@ -77,10 +77,10 @@ private List<Meter> meters;
 @ManyToOne
 @JoinColumn(name = "buildFK")
 private Building building;
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection*{Many-to-Many Example (Project $\leftrightarrow$ Employee)}
-\begin{verbatim}
+\begin{lstlisting}
 // Project.java (Owner Side)
 @ManyToMany(fetch = FetchType.EAGER)
 @JoinTable(
@@ -93,12 +93,12 @@ private List<Employee> employees;
 // Employee.java (Inverse Side)
 @ManyToMany(mappedBy = "employees")
 private List<Project> assignedProjects;
-\end{verbatim}
+\end{lstlisting}
 
 \section*{Part 3: Advanced Patterns (N:M with Attributes)}
 \subsection*{\texttt{@ElementCollection}}
 Use when the relationship attribute is simple (e.g., a number, a string). The collection becomes a \texttt{Map<Entity, AttributeType>}.
-\begin{verbatim}
+\begin{lstlisting}
 // In Order.java
 @ElementCollection(fetch = FetchType.EAGER)
 @CollectionTable(name = "product_order", 
@@ -106,22 +106,22 @@ Use when the relationship attribute is simple (e.g., a number, a string). The co
 @MapKeyJoinColumn(name = "productId") // FK for the Map Key (Product)
 @Column(name = "quantity")            // Column for the Map Value (Integer)
 private Map<Product, Integer> products;
-\end{verbatim}
+\end{lstlisting}
 
 \subsection*{Association Entity}
 Objectify the relationship into its own entity. Use this when the relationship is complex or needs to be referenced directly.
 \begin{enumerate}
     \item \textbf{Create a Composite Key Class} (\texttt{@Embeddable})
-    \begin{verbatim}
+    \begin{lstlisting}
 @Embeddable
 public class OrderLineId implements Serializable {
     private Long orderId;
     private Long productId;
     // ...constructors, getters, equals, hashCode
 }
-    \end{verbatim}
+    \end{lstlisting}
     \item \textbf{Create the Association Entity} (\texttt{@Entity})
-    \begin{verbatim}
+    \begin{lstlisting}
 @Entity
 public class OrderLine {
     @EmbeddedId
@@ -137,5 +137,5 @@ public class OrderLine {
 
     private int quantity;
 }
-    \end{verbatim}
+    \end{lstlisting}
 \end{enumerate}
