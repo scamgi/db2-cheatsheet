@@ -47,7 +47,7 @@ Uses \texttt{@JoinColumn} to name the FK. & Uses \texttt{mappedBy} attribute. \\
 \hline
 \texttt{@ManyToOne}, \texttt{@OneToOne} & \texttt{@OneToMany}, \texttt{@OneToOne} \\
 \hline
-\multicolumn{2}{|c|}{\texttt{fetch = FetchType.LAZY} (for collections) or \texttt{FetchType.EAGER}} \\
+\multicolumn{2}{|c|}{\texttt{fetch = FetchType.LAZY} (for collections) or \texttt{FetchType.EAGER} (for single objects)} \\
 \hline
 \texttt{cascade = \{CascadeType.PERSIST, REMOVE, ...\}} & No cascade settings. \\
 \texttt{orphanRemoval = true} & \\
@@ -55,19 +55,8 @@ Uses \texttt{@JoinColumn} to name the FK. & Uses \texttt{mappedBy} attribute. \\
 \end{tabular}
 \end{center}
 
-\subsubsection*{One-to-One Example (Employee $\leftrightarrow$ ParkingSpace)}
-\begin{lstlisting}
-// Employee.java (Owner)
-@OneToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "ps_fk")
-private ParkingSpace parkingSpace;
-
-// ParkingSpace.java (Inverse)
-@OneToOne(mappedBy = "parkingSpace")
-private Employee employee;
-\end{lstlisting}
-
 \subsubsection*{One-to-Many Example (Building $\leftrightarrow$ Meter)}
+This is the most common bidirectional relationship. The "Many" side is the owner.
 \begin{lstlisting}
 // Building.java (Inverse Side)
 @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
@@ -80,6 +69,7 @@ private Building building;
 \end{lstlisting}
 
 \subsubsection*{Many-to-Many Example (Project $\leftrightarrow$ Employee)}
+A join table is used, so either side can be the owner.
 \begin{lstlisting}
 // Project.java (Owner Side)
 @ManyToMany(fetch = FetchType.EAGER)
@@ -91,11 +81,13 @@ private Building building;
 private List<Employee> employees;
 
 // Employee.java (Inverse Side)
-@ManyToMany(mappedBy = "employees")
+@ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
 private List<Project> assignedProjects;
 \end{lstlisting}
 
 \section*{Part 3: Advanced Patterns (N:M with Attributes)}
+When a Many-to-Many relationship has its own attributes (like `quantity` in an order), you have two main options.
+
 \subsection*{\texttt{@ElementCollection}}
 Use when the relationship attribute is simple (e.g., a number, a string). The collection becomes a \texttt{Map<Entity, AttributeType>}.
 \begin{lstlisting}
@@ -139,3 +131,20 @@ public class OrderLine {
 }
     \end{lstlisting}
 \end{enumerate}
+
+\section*{Part 4: Operation-Cascading Cheat Sheet}
+\begin{center}
+\begin{tabular}{|l|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Directive} & \texttt{cascade = CascadeType.PERSIST} & \texttt{cascade = CascadeType.REMOVE} & \texttt{orphanRemoval = true} \\
+\hline
+\textbf{Trigger} & The parent entity is persisted (e.g., \texttt{em.persist(parent)}). & The parent entity is removed (e.g., \texttt{em.remove(parent)}). & The parent-child link is broken. This happens if: \newline - The parent is removed. \newline - The child reference on the parent is set to \texttt{null}. \newline - The child is removed from the parent's collection. \\
+\hline
+\textbf{Effect} & The associated child entity is also persisted. & The associated child entity is also removed from the database. & The "orphaned" child entity is removed from the database. \\
+\hline
+\textbf{Use Case} & Automatically save a new \texttt{Address} when saving a new \texttt{Employee}. & Automatically delete all of a building's \texttt{Meters} when the \texttt{Building} is deleted. & Automatically delete an \texttt{Expense} report if it is unlinked from its \texttt{Mission}, ensuring no expense report exists on its own. \\
+\hline
+\textbf{Key Point} & Manages the \textbf{creation} lifecycle. & Manages the \textbf{deletion} lifecycle based on the parent's deletion. & Manages the deletion lifecycle based on the \textbf{relationship status}. Stronger than \texttt{CascadeType.REMOVE}. \\
+\hline
+\end{tabular}
+\end{center}
