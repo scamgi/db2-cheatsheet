@@ -12,10 +12,7 @@
 \subsection*{Protocols \& Classes}
 [INSERT HERE the image about the classes]
 \begin{itemize}
-    \item \textbf{VSR (View-Serializable):}
-    \begin{itemize}
-        \item If the schedule is CSR, then it is VSR.
-    \end{itemize}
+    \item \textbf{VSR (View-Serializable):} Schedules are equivalent to some serial schedule from a view perspective.
     \item \textbf{CSR (Conflict-Serializable):} Schedules can be transformed into a serial schedule by swapping non-conflicting operations. Precedence graph must be acyclic.
     \item \textbf{2PL (Two-Phase Locking):} A transaction has a growing phase (acquiring locks) and a shrinking phase (releasing locks). Cannot acquire after releasing.
     \item \textbf{Strict-2PL:} All exclusive (write) locks are held until the transaction commits or aborts. Prevents dirty reads.
@@ -24,3 +21,27 @@
     \item \textbf{Timestamp Ordering (TS-Multi):} Multi-version concurrency control (MVCC).
     \item \textbf{Hierarchy Locking:} A protocol for locking objects at different granularities (e.g., table, page, row).
 \end{itemize}
+
+\subsection*{How to Determine if a Schedule is CSR}
+To determine if a schedule is Conflict-Serializable (CSR), you must check if its precedence (or conflict) graph is acyclic. If there are no cycles, the schedule is CSR.
+
+\begin{enumerate}
+    \item \textbf{Identify Conflicts:} Find all conflicting operations. Two operations from different transactions conflict if they access the same data item and at least one is a write.
+    \begin{itemize}
+        \item Read-Write
+        \item Write-Read
+        \item Write-Write
+    \end{itemize}
+
+    \item \textbf{Draw the Precedence Graph:}
+    \begin{itemize}
+        \item \textbf{Nodes:} Create one node for each transaction in the schedule.
+        \item \textbf{Edges:} Draw a directed edge from transaction \textbf{$T_i$} to \textbf{$T_j$} if an operation in $T_i$ conflicts with and occurs \textit{before} an operation in $T_j$.
+    \end{itemize}
+
+    \item \textbf{Check for Cycles:}
+    \begin{itemize}
+        \item If the graph has \textbf{no cycles}, the schedule is \textbf{CSR}.
+        \item If the graph has \textbf{one or more cycles}, the schedule is \textbf{not CSR}.
+    \end{itemize}
+\end{enumerate}
