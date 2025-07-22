@@ -16,8 +16,8 @@
 % Start a new page for the actual content
 \newpage
 
-% Begin the three-column layout for the rest of the document
-\begin{multicols}{3}
+% Use the starred multicols environment, which does not balance columns by default.
+\begin{multicols*}{3}
 
 % Set a smaller font size for the cheatsheet content to fit more information
 \small
@@ -29,6 +29,6 @@
 \input{sections/triggers.tex}
 \input{sections/physical_databases.tex}
 
-\end{multicols}
+\end{multicols*}
 
 \end{document}

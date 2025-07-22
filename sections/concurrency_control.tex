@@ -27,21 +27,111 @@ To determine if a schedule is Conflict-Serializable (CSR), you must check if its
 
 \begin{enumerate}
     \item \textbf{Identify Conflicts:} Find all conflicting operations. Two operations from different transactions conflict if they access the same data item and at least one is a write.
-    \begin{itemize}
-        \item Read-Write
-        \item Write-Read
-        \item Write-Write
-    \end{itemize}
-
+          \begin{itemize}
+              \item Read-Write
+              \item Write-Read
+              \item Write-Write
+          \end{itemize}
     \item \textbf{Draw the Precedence Graph:}
-    \begin{itemize}
-        \item \textbf{Nodes:} Create one node for each transaction in the schedule.
-        \item \textbf{Edges:} Draw a directed edge from transaction \textbf{$T_i$} to \textbf{$T_j$} if an operation in $T_i$ conflicts with and occurs \textit{before} an operation in $T_j$.
-    \end{itemize}
-
+          \begin{itemize}
+              \item \textbf{Nodes:} Create one node for each transaction in the schedule.
+              \item \textbf{Edges:} Draw a directed edge from transaction \textbf{$T_i$} to \textbf{$T_j$} if an operation in $T_i$ conflicts with and occurs \textit{before} an operation in $T_j$.
+          \end{itemize}
     \item \textbf{Check for Cycles:}
-    \begin{itemize}
-        \item If the graph has \textbf{no cycles}, the schedule is \textbf{CSR}.
-        \item If the graph has \textbf{one or more cycles}, the schedule is \textbf{not CSR}.
-    \end{itemize}
+          \begin{itemize}
+              \item If the graph has \textbf{no cycles}, the schedule is \textbf{CSR}. Example:
+
+                    \begin{verbatim}
+s: w_3
+u: w_5 w_2 w_1
+x: r_1 r_5 w_3
+y: r_2 w_3 r_4
+z: w_5 r_5
+\end{verbatim}
+
+
+                    \begin{tikzpicture}[
+                            node_style/.style={
+                                    circle,
+                                    draw=black,
+                                    fill=cyan!30,
+                                    minimum size=1cm,
+                                    font=\Large
+                                },
+                            arrow_style/.style={
+                                    -Stealth,
+                                    very thick
+                                },
+                            gray_arrow_style/.style={
+                                    -Stealth,
+                                    thick,
+                                    gray
+                                }
+                        ]
+
+                        % Define nodes
+                        \node[node_style] (n1) at (1, 2) {1};
+                        \node[node_style] (n2) at (-2, 0) {2};
+                        \node[node_style] (n3) at (3, 0) {3};
+                        \node[node_style] (n4) at (4.5, 2) {4};
+                        \node[node_style] (n5) at (0, -2) {5};
+
+                        % Draw edges
+                        \draw[arrow_style] (n1) to (n3);
+                        \draw[arrow_style] (n2) to (n1);
+                        \draw[arrow_style] (n3) to (n4);
+                        \draw[arrow_style] (n5) to (n2);
+                        \draw[gray_arrow_style] (n5) to (n1);
+
+                    \end{tikzpicture}
+
+
+              \item If the graph has \textbf{one or more cycles}, the schedule is \textbf{not CSR}. Example:
+
+                    \begin{Verbatim}[commandchars=\\\{\}]
+s: \textcolor{red}{\textbf{w_2}} w_3
+u: \textcolor{red}{\textbf{r_2}} w_5 w_2 w_1
+x: r_1 r_5 w_3
+y: r_2 w_3 r_4
+z: w_5 r_5
+                    \end{Verbatim}
+
+                    \begin{tikzpicture}[
+                            node_style/.style={
+                                    circle,
+                                    draw=black,
+                                    fill=cyan!30,
+                                    minimum size=1cm,
+                                    font=\Large
+                                },
+                            arrow_style/.style={
+                                    -Stealth,
+                                    very thick
+                                },
+                            red_arrow_style/.style={
+                                    -Stealth,
+                                    very thick,
+                                    red,
+                                    bend right=45
+                                }
+                        ]
+
+                        % Define nodes
+                        \node[node_style] (n1) at (1.5, 2) {1};
+                        \node[node_style] (n2) at (-1.5, 0) {2};
+                        \node[node_style] (n3) at (3.5, 0) {3};
+                        \node[node_style] (n4) at (5, 2) {4};
+                        \node[node_style] (n5) at (0, -2) {5};
+
+                        % Draw edges
+                        \draw[arrow_style] (n1) to (n3);
+                        \draw[arrow_style] (n2) to (n1);
+                        \draw[arrow_style] (n3) to (n4);
+                        \draw[arrow_style] (n5) to (n1);
+                        \draw[arrow_style] (n5) to (n2);
+                        \draw[red_arrow_style] (n2) to (n5);
+
+                    \end{tikzpicture}
+
+          \end{itemize}
 \end{enumerate}
