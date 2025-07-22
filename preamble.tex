@@ -1,0 +1,45 @@
+% Preamble for the Databases 2 Cheatsheet
+
+% Set the document class to article, A4 paper, and landscape orientation.
+\documentclass[a4paper, landscape]{article}
+
+% --- PACKAGE IMPORTS ---
+
+% Encoding
+\usepackage[utf8]{inputenc}
+
+% Geometry package to set margins and layout
+% We set a small margin to maximize space on the cheatsheet
+\usepackage[a4paper, landscape, margin=1cm]{geometry}
+
+% Package for creating multiple columns
+\usepackage{multicol}
+
+% Advanced math formulas
+\usepackage{amsmath}
+
+% For placeholder text (can be removed later)
+\usepackage{lipsum}
+
+% For better font handling
+\usepackage[T1]{fontenc}
+
+% --- DOCUMENT METADATA ---
+
+\title{Databases 2 Cheatsheet}
+\author{Giacomo Scampini}
+\date{\today}
+
+% --- CUSTOM COMMANDS & SETTINGS ---
+
+% Set the paragraph indentation to zero, and add a small vertical space between paragraphs.
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+% Define the style for sections to be more compact
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% Ensure page numbers are on subsequent pages
+\pagestyle{plain}

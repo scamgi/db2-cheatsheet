@@ -1,0 +1,27 @@
+% sections/physical_databases.tex
+
+\section*{Physical Database Design}
+
+\subsection*{Data Structures}
+\begin{itemize}
+    \item \textbf{Hash Tables:} Used for implementing hash indexes and hash joins. Provides O(1) average time complexity for lookups.
+    \item \textbf{B+ Trees:} The most common structure for database indexes. Balanced, sorted, and optimized for disk-based storage.
+\end{itemize}
+
+\subsection*{Query Plan Operators}
+\begin{itemize}
+    \item \textbf{Sequential Scan:} Read every page in a table.
+    \item \textbf{Merge Sort:} Used for external sorting of data that doesn't fit in memory.
+    \item \textbf{Lookup (Index Scan):} Use an index (e.g., B+ tree) to find specific rows.
+    \item \textbf{Filter + Lookup:} Apply a filter and then use an index.
+    \item \textbf{Merge-Scan Join:} Both inputs must be sorted on the join key. Reads through both tables simultaneously.
+    \item \textbf{Sort + Merge-Scan Join:} If inputs are not sorted, sort them first, then perform a merge-scan join.
+    \item \textbf{Indexed Merge-Scan Join (Index Nested Loop):} Iterate through the outer table and use an index on the inner table for each row.
+    \item \textbf{Hashed Join:} Build a hash table on the smaller table, then stream the larger table to probe the hash table for matches.
+\end{itemize}
+
+\subsection*{Keys}
+\begin{itemize}
+    \item \textbf{Primary Key:} A unique, non-null constraint that identifies a record. The data is often physically clustered by this key.
+    \item \textbf{Search Key:} The key/attribute on which an index is built. Does not have to be unique.
+\end{itemize}

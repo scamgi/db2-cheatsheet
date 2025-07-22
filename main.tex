@@ -1,0 +1,34 @@
+% This is the main file for the cheatsheet.
+% It loads the preamble and includes the content from the sections.
+
+% Load all packages and settings from the preamble file
+\input{preamble.tex}
+
+\begin{document}
+
+% --- TITLE PAGE ---
+% Create the title page using the metadata from the preamble
+\maketitle
+% Remove the page number from the title page
+\thispagestyle{empty}
+
+% --- CHEATSHEET CONTENT ---
+% Start a new page for the actual content
+\newpage
+
+% Begin the three-column layout for the rest of the document
+\begin{multicols}{3}
+
+% Set a smaller font size for the cheatsheet content to fit more information
+\small
+
+% Input all the sections of the cheatsheet
+\input{sections/concurrency_control.tex}
+\input{sections/ranking.tex}
+\input{sections/jpa.tex}
+\input{sections/triggers.tex}
+\input{sections/physical_databases.tex}
+
+\end{multicols}
+
+\end{document}
