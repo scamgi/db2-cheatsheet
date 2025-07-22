@@ -37,11 +37,11 @@ The repository is organized as follows:
 ├── out/                # (Generated) Output directory for the PDF
 ├── preamble.tex        # Contains all LaTeX packages and document settings
 └── sections/
-    ├── 01_concurrency_control.tex
-    ├── 02_ranking.tex
-    ├── 03_jpa.tex
-    ├── 04_triggers.tex
-    └── 05_physical_databases.tex
+    ├── concurrency_control.tex
+    ├── ranking.tex
+    ├── jpa.tex
+    ├── triggers.tex
+    └── physical_databases.tex
 ```
 
 * **`main.tex`**: The root document. It sets up the title page and includes the content from the `sections/` folder.
